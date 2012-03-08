@@ -21,7 +21,7 @@ PS: '/path/to/usefullib' is a random pathway you like.
 
 ## Modules
 
-* [Overlap.pm](https://github.com/kepbod/usefultools/blob/master/perl/Overlap.pm): Used to cope with overlaps between arrays  
+* [Overlap.pm](https://github.com/kepbod/usefullib/blob/master/perl/Overlap.pm): Used to cope with overlaps between arrays  
     Functions: OverlapMax, OverlapMap, OverlapMerge
 
 ## Notice
