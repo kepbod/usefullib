@@ -1,13 +1,12 @@
 #!/usr/bin/perl
+use strict;
+use warnings;
+use 5.010;
 
 package Overlap;
 
 our $AUTHOR = "Xiao'ou Zhang";
-our $VERSION = 0.1.0;
-
-use strict;
-use warnings;
-use 5.010;
+our $VERSION = "0.1.0";
 
 require Exporter;
 our @ISA = qw(Exporter);
