@@ -3,6 +3,11 @@ use strict;
 use warnings;
 use 5.010;
 
+#
+# Module Name: Overlap.pm
+# Function: Used to cope with overlaps between arrays.
+#
+
 package Overlap;
 
 our $AUTHOR = "Xiao'ou Zhang";
@@ -297,7 +302,7 @@ sub OverlapMerge {
 ##########Internal Subroutine##########
 
 #
-# Check parameters imported from outside.
+# Function: Check parameters imported from outside.
 #
 sub _parameter_check {
     my ($subroutine, $n, $re_old_parameter, $re_value, $re_default) = @_;
@@ -319,7 +324,7 @@ sub _parameter_check {
 }
 
 #
-# Sort array according to indexes
+# Function: Sort array according to indexes
 #
 sub _sort {
     my ($re_array, $sep, $flag) = @_;
@@ -340,7 +345,7 @@ sub _sort {
 }
 
 #
-# Set seperator
+# Function: Set seperator
 #
 sub _set_sep {
     my ($re_sep, $re_out_sep) = @_;
