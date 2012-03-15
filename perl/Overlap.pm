@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use 5.010;
 
 #
 # Module Name: Overlap.pm
@@ -21,22 +20,16 @@ our @EXPORT_OK = qw(OverlapMax OverlapMap OverlapMerge);
 
 #
 # Name: OverlapMax
-# Parameter: \@old_array (or \$old_array, when used $flag_of_sorted will be set 1),
-#            $seperator (nonword character) (optional),
+# Parameter: \@old_array, $seperator (nonword character) (optional),
 #            $flag_of_containing_tag (0 or 1) (optional),
 #            $flag_of_sorted (0 or 1) (optional)
 # Default Values: $seperator = \s, $flag_of_containing_tag = 0, $flag_of_sorted = 0
 # Return: @new_array (return the pointer to @new_array in scalar context)
-#         $interval (if the first parameter is \$old_array)
 #
 # Function: Used to extract the max overlaps from this array.
 #
 # Example: input '2 5', '3 7', '10 16', '12 13', '6 8'
 #          output '2 8', '10 16'
-#
-# Notice:
-# 1.When using \$old_array, it will not sort the array again.
-# 2.Remember to return the last interval use \$undef_value when use \$old_array.
 #
 sub OverlapMax {
 
@@ -44,8 +37,7 @@ sub OverlapMax {
     die "OverlapMax can't in void context!\n" unless defined wantarray;
 
     # initiate internal parameters
-    my ($out_sep, $re_sorted_array, @new_array, $is_array, $status, $first_data);
-    state $interval1;
+    my ($out_sep, $re_sorted_array, @new_array, $first_data, $interval1);
 
     my $re_old_array = shift; # $re_old_array: \@old_array or \$re_old_array
 
@@ -57,25 +49,6 @@ sub OverlapMax {
     # set output_seperator
     _set_sep(\$sep, \$out_sep);
 
-    # check the first parameter
-    if (ref $re_old_array eq 'ARRAY') {
-        $is_array = 1;
-    }
-    elsif (ref $re_old_array eq 'SCALAR') {
-        # if $old_array is undef, return last interval
-        unless (defined $$re_old_array) {
-            my $tmp = $interval1;
-            $interval1 = undef; # clear $interval1 for next usage
-            return $tmp;
-        }
-        $is_array = 0;
-        $status = 'uncomplete'; # initiate status
-        $re_old_array = [$$re_old_array];
-        $flag2 = 1;
-    }
-    else {
-        die "Errors with OverlapMax 1 parameter!";
-    }
 
     unless ($flag2) { # sort @old_array by its first index if not sorted
         $re_sorted_array = _sort($re_old_array, $sep, 1);
@@ -94,27 +67,21 @@ sub OverlapMax {
         if ((split /$sep/,$interval1)[1] >= (split /$sep/,$interval2)[0]) {
             my $tmp = (split /$sep/,$interval1)[1] > (split /$sep/,$interval2)[1] ?
                       (split /$sep/,$interval1)[1] : (split /$sep/,$interval2)[1];
-            if ($flag1) { # if has tags
+            if ($flag1) { # if have tags
                 $interval1 = (split /$sep/,$interval1)[0] . $out_sep . $tmp .
                              $out_sep . (split /$sep/,$interval1,3)[-1] . $out_sep .
                              (split /$sep/,$interval2,3)[-1];
             }
-            else { # if not has tags
+            else { # if not have tags
                 $interval1 = (split /$sep/,$interval1)[0] . $out_sep . $tmp;
             }
         }
         else{ # if there are no overlaps between $interval1 and $interval2
             push @new_array,$interval1;
-            unless ($is_array) { # change status when this interval is closed
-                $status = $interval1;
-            }
             $interval1 = $interval2;
         }
     }
     unshift @$re_sorted_array,$first_data; # recover $old_array
-    unless ($is_array) {
-        return $status; # return for scalar parameter
-    }
     push @new_array,$interval1; # push the last interval into @new_array
     # return new array according to context
     return wantarray ? @new_array : \@new_array;
@@ -197,16 +164,12 @@ sub OverlapMap {
             goto LABEL; # read next read
         }
         my $tag;
-        given ($flag1) { # set tag according to flag
-            when (00) {$tag = ''; break}
-            when (01) {$tag = $out_sep . (split /$sep/,$read)[2]; break}
-            when (10) {$tag = $out_sep . (split /$sep/,$interval)[2]; break}
-            when (11) {
-                $tag = $out_sep . (split /$sep/,$interval)[2] . $out_sep .
-                       (split /$sep/,$read)[2];
-                break;
-            }
-        }
+        # set tag according to flag
+        $tag = '' if $flag1 == 0;
+        $tag = $out_sep . (split /$sep/,$read)[2] if $flag1 == 1;
+        $tag = $out_sep . (split /$sep/,$interval)[2] if $flag1 ==10;
+        $tag = $out_sep . (split /$sep/,$interval)[2] . $out_sep .
+               (split /$sep/,$read)[2] if $flag1 == 11;
         my $tmp = $first . $out_sep . $second . $tag;
         push @mapped_array,$tmp; # output interval
         if ($second == (split /$sep/,$interval)[1]) { # exist over-through read
@@ -269,16 +232,11 @@ sub OverlapMerge {
         }
         if($first < $second) {
             my $tag;
-            given ($flag1) { # set tag according to flag
-                when (00) {$tag = ''; break}
-                when (01) {$tag = $out_sep . (split /$sep/,$interval2)[2]; break}
-                when (10) {$tag = $out_sep . (split /$sep/,$interval1)[2]; break}
-                when (11) {
-                    $tag = $out_sep . (split /$sep/,$interval1)[2] . $out_sep .
-                        (split /$sep/,$interval2)[2];
-                    break;
-                }
-            }
+            $tag = '' if $flag1 == 0;
+            $tag = $out_sep . (split /$sep/,$interval2)[2] if $flag1 == 1;
+            $tag = $out_sep . (split /$sep/,$interval1)[2] if $flag1 == 10;
+            $tag = $out_sep . (split /$sep/,$interval1)[2] . $out_sep .
+                   (split /$sep/,$interval2)[2] if $flag1 == 11;
             my $tmp = $first . $out_sep . $second . $tag;
             push @merged_array,$tmp;
         }
