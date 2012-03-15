@@ -225,10 +225,10 @@ sub OverlapMerge {
         my $second = (split /$sep/,$interval1)[1] < (split /$sep/,$interval2)[1] ?
                 (split /$sep/,$interval1)[1] : (split /$sep/,$interval2)[1];
         if ((split /$sep/,$interval1)[1] == $second) {
-            $i++; # point to next element
+            ++$i; # point to next element
         }
         if ((split /$sep/,$interval2)[1] == $second) {
-            $j++; # point to next element
+            ++$j; # point to next element
         }
         if($first < $second) {
             my $tag;
