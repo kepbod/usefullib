@@ -41,6 +41,9 @@ sub OverlapMax {
 
     my $re_old_array = shift; # $re_old_array: \@old_array or \$re_old_array
 
+    # no elements in array
+    die "Your array has no elements!\n" unless @$re_old_array;
+
     # check optional parameters
     # $sep: $seperator, $flag1: $flag_of_containing_tag, $flag2: $flag_of_sorted
     my ($sep, $flag1, $flag2) = _parameter_check('OverlapMax', 3, \@_,
@@ -121,6 +124,10 @@ sub OverlapMap {
 
     my $re_map_to_array = shift; # $re_map_to_array: \@map_to_array
     my $re_map_array = shift; # $re_map_array: \@map_array
+
+    # no elements in arrays
+    die "Your arrays have no elements!\n" if not @$re_map_to_array
+        or not @$re_map_array;
 
     # check optional parameters
     # $sep: $seperator, $flag1: $flag_of_containing_tag, $flag2: $flag_of_sorted
@@ -210,6 +217,10 @@ sub OverlapMerge {
     my $re_array1 = shift; # $re_array1: \@array1
     my $re_array2 = shift; # $re_array2: \@array2
 
+    # no elements in arrays
+    die "Your arrays have no elements!\n" if not @$re_array1
+        or not @$re_array2;
+
     # check optional parameters
     # $sep: $seperator, $flag1: $flag_of_containing_tag
     my ($sep, $flag1) = _parameter_check('OverlapMerge', 2, \@_,
@@ -240,17 +251,8 @@ sub OverlapMerge {
             my $tmp = $first . $out_sep . $second . $tag;
             push @merged_array,$tmp;
         }
-        if ($i > $#{$re_array1}) { # if @array1 over
-            if (defined $$re_array2[$j]) {
-                push @merged_array,@{$re_array2}[$j..$#{$re_array2}];
-                last;
-            }
-        }
-        if ($j > $#{$re_array2}) { # if @array2 over
-            if (defined $$re_array1[$i]) {
-                push @merged_array,@{$re_array1}[$i..$#{$re_array1}];
-                last;
-            }
+        if ($i > $#{$re_array1} or $j > $#{$re_array2}) { # if @array1 over
+            last;
         }
     }
     # return new array according to context
