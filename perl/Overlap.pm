@@ -203,7 +203,7 @@ sub OverlapMap {
 #
 # Example: input (1) '2 5', '7 9', '11 12', '15 17', '19 25', '27 30'
 #                (2) '3 6', '8 12', '14 17'
-#          output '3 5', '8 9', '11 12', '15 17', '19 25', '27 30'
+#          output '3 5', '8 9', '11 12', '15 17'
 #
 sub OverlapMerge {
 
@@ -251,7 +251,7 @@ sub OverlapMerge {
             my $tmp = $first . $out_sep . $second . $tag;
             push @merged_array,$tmp;
         }
-        if ($i > $#{$re_array1} or $j > $#{$re_array2}) { # if @array1 over
+        if ($i > $#{$re_array1} or $j > $#{$re_array2}) { # if arrays over
             last;
         }
     }
