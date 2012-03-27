@@ -1,13 +1,13 @@
-#!/usr/bin/perl
-use strict;
-use warnings;
+package Overlap;
 
 #
 # Module Name: Overlap.pm
 # Function: Used to cope with overlaps between arrays.
 #
 
-package Overlap;
+use strict;
+use warnings;
+use Carp;
 
 our $AUTHOR = "Xiao'ou Zhang";
 our $VERSION = "0.1.0";
@@ -34,21 +34,20 @@ our @EXPORT_OK = qw(OverlapMax OverlapMap OverlapMerge);
 sub OverlapMax {
 
     # if in void context
-    die "OverlapMax can't in void context!\n" unless defined wantarray;
+    croak "OverlapMax can't in void context!\n" unless defined wantarray;
 
     # initiate internal parameters
     my ($out_sep, $re_sorted_array, @new_array, $first_data, $interval1);
 
-    my $re_old_array = shift; # $re_old_array: \@old_array or \$re_old_array
+    my $re_old_array = shift; # $re_old_array: \@old_array
 
     # no elements in array
-    die "Your array has no elements!\n" unless @$re_old_array;
+    croak "Your array has no elements!\n" unless @$re_old_array;
 
     # check optional parameters
     # $sep: $seperator, $flag1: $flag_of_containing_tag, $flag2: $flag_of_sorted
-    my ($sep, $flag1, $flag2) = _parameter_check('OverlapMax', 3, \@_,
+    my ($sep, $flag1, $flag2) = _parameter_check(3, \@_,
                                 [qr(\W), qr(0|1), qr(0|1)], ['\s', 0, 0]);
-
     # set output_seperator
     _set_sep(\$sep, \$out_sep);
 
@@ -117,7 +116,7 @@ sub OverlapMax {
 sub OverlapMap {
 
     # if in void context
-    die "OverlapMax can't in void context!\n" unless defined wantarray;
+    croak "OverlapMax can't in void context!\n" unless defined wantarray;
 
     # initiate internal parameters
     my ($out_sep, $re_sorted_map_array, @mapped_array, $read, @tmp_array);
@@ -126,12 +125,12 @@ sub OverlapMap {
     my $re_map_array = shift; # $re_map_array: \@map_array
 
     # no elements in arrays
-    die "Your arrays have no elements!\n" if not @$re_map_to_array
+    croak "Your arrays have no elements!\n" if not @$re_map_to_array
         or not @$re_map_array;
 
     # check optional parameters
     # $sep: $seperator, $flag1: $flag_of_containing_tag, $flag2: $flag_of_sorted
-    my ($sep, $flag1, $flag2) = _parameter_check('OverlapMax', 3, \@_,
+    my ($sep, $flag1, $flag2) = _parameter_check(3, \@_,
                                 [qr(\W), qr((0|1){1,2}), qr(0|1)],
                                 ['\s', '11', '0']);
 
@@ -208,7 +207,7 @@ sub OverlapMap {
 sub OverlapMerge {
 
     # if in void context
-    die "OverlapMax can't in void context!\n" unless defined wantarray;
+    croak "OverlapMax can't in void context!\n" unless defined wantarray;
 
     # initiate internal parameters
     my ($out_sep, @merged_array);
@@ -218,12 +217,12 @@ sub OverlapMerge {
     my $re_array2 = shift; # $re_array2: \@array2
 
     # no elements in arrays
-    die "Your arrays have no elements!\n" if not @$re_array1
+    croak "Your arrays have no elements!\n" if not @$re_array1
         or not @$re_array2;
 
     # check optional parameters
     # $sep: $seperator, $flag1: $flag_of_containing_tag
-    my ($sep, $flag1) = _parameter_check('OverlapMerge', 2, \@_,
+    my ($sep, $flag1) = _parameter_check(2, \@_,
                         [qr(\W), qr((0|1){1,2})], ['\s', '00']);
 
     # set output_seperator
@@ -265,7 +264,7 @@ sub OverlapMerge {
 # Function: Check parameters imported from outside.
 #
 sub _parameter_check {
-    my ($subroutine, $n, $re_old_parameter, $re_value, $re_default) = @_;
+    my ($n, $re_old_parameter, $re_value, $re_default) = @_;
     my @new_parameter;
     for (0..$n-1) {
         if (!defined $$re_old_parameter[$_]) { # no parameter, use default instead
@@ -276,7 +275,8 @@ sub _parameter_check {
             # check parameter value
             unless ($$re_old_parameter[$_] =~ $$re_value[$_]) {
                 my $pos = $_ + 1;
-                die "Errors with $subroutine optional parameter $pos \n";
+                my $subroutine = (caller 1)[3];
+                croak "Errors with $subroutine optional parameter $pos \n";
             }
         }
     }
@@ -299,7 +299,7 @@ sub _sort {
                              @$re_array;
     }
     else { # the flag is wrong
-        die "Errors occure when sorting!\n";
+        croak "Errors occure when sorting!\n";
     }
     return \@sorted_array;
 }
