@@ -24,7 +24,7 @@ our @EXPORT_OK = qw(OverlapMax OverlapMap OverlapMerge);
 #            $flag_of_containing_tag (0 or 1) (optional),
 #            $flag_of_sorted (0 or 1) (optional)
 # Default Values: $seperator = \s, $flag_of_containing_tag = 0, $flag_of_sorted = 0
-# Return: @new_array (return the pointer to @new_array in scalar context)
+# Return: \@new_array
 #
 # Function: Used to extract the max overlaps from this array.
 #
@@ -53,7 +53,7 @@ sub OverlapMax {
 
 
     unless ($flag2) { # sort @old_array by its first index if not sorted
-        $re_sorted_array = _sort($re_old_array, $sep, 1);
+        $re_sorted_array = _sort($re_old_array, $sep);
     }
     else { # if sorted
         $re_sorted_array = $re_old_array;
@@ -86,7 +86,7 @@ sub OverlapMax {
     unshift @$re_sorted_array,$first_data; # recover $old_array
     push @new_array,$interval1; # push the last interval into @new_array
     # return new array according to context
-    return wantarray ? @new_array : \@new_array;
+    return \@new_array;
 
 }
 
@@ -97,9 +97,9 @@ sub OverlapMax {
 #            $seperator (nonword character) (optional),
 #            $flag_of_containing_tag (00 or 01 or 10 or 11) (optional),
 #            $flag_of_sorted (0 or 1) (focus on @map_array) (optional)
-# Default Values: $seperator = \s, $flag_of_containing_tag = 11,
+# Default Values: $seperator = \s, $flag_of_containing_tag = 00,
 #                 $flag_of_sorted = 0
-# Return: @mapped_array (return the pointer to @mapped_array in scalar context)
+# Return: \@mapped_array
 #
 # Function: Used to map a messy array to a clean index.
 #
@@ -116,7 +116,7 @@ sub OverlapMax {
 sub OverlapMap {
 
     # if in void context
-    croak "OverlapMax can't in void context!\n" unless defined wantarray;
+    croak "OverlapMap can't in void context!\n" unless defined wantarray;
 
     # initiate internal parameters
     my ($out_sep, $re_sorted_map_array, @mapped_array, $read, @tmp_array);
@@ -132,13 +132,13 @@ sub OverlapMap {
     # $sep: $seperator, $flag1: $flag_of_containing_tag, $flag2: $flag_of_sorted
     my ($sep, $flag1, $flag2) = _parameter_check(3, \@_,
                                 [qr(\W), qr((0|1){1,2}), qr(0|1)],
-                                ['\s', '11', '0']);
+                                ['\s', '00', '0']);
 
     # set output_seperator
     _set_sep(\$sep, \$out_sep);
 
     unless ($flag2) { # sort @map_array by its first index if not sorted
-        $re_sorted_map_array = _sort($re_map_array, $sep, 1);
+        $re_sorted_map_array = _sort($re_map_array, $sep);
     }
     else { # if sorted
         $re_sorted_map_array = $re_map_array;
@@ -187,7 +187,7 @@ sub OverlapMap {
         goto LABEL; # read next read
     }
     # return new array according to context
-    return wantarray ? @mapped_array : \@mapped_array;
+    return \@mapped_array;
 }
 
 #
@@ -196,7 +196,7 @@ sub OverlapMap {
 #            $seperator (nonword character) (optional),
 #            $flag_of_containing_tag (00 or 01 or 10 or 11) (optional),
 # Default Values: $seperator = \s, $flag_of_containing_tag = 00,
-# Return: @merged_array (return the pointer to @merged_array in scalar context)
+# Return: \@merged_array
 #
 # Function: Used to merge two index.
 #
@@ -255,7 +255,7 @@ sub OverlapMerge {
         }
     }
     # return new array according to context
-    return wantarray ? @merged_array : \@merged_array;
+    return \@merged_array;
 }
 
 ##########Internal Subroutine##########
@@ -287,20 +287,12 @@ sub _parameter_check {
 # Function: Sort array according to indexes
 #
 sub _sort {
-    my ($re_array, $sep, $flag) = @_;
-    my @sorted_array;
-    if ($flag == 1) { # sort by the first index
-        @sorted_array = sort { (split /$sep/,$a)[0] <=> (split /$sep/,$b)[0] }
-                             @$re_array;
-    }
-    elsif ($flag == 2) { # sort by the first and the second indexes
-        @sorted_array = sort { (split /$sep/,$a)[0] <=> (split /$sep/,$b)[0] or
-                               (split /$sep/,$a)[1] <=> (split /$sep/,$b)[1] }
-                             @$re_array;
-    }
-    else { # the flag is wrong
-        croak "Errors occure when sorting!\n";
-    }
+    my ($re_array, $sep) = @_;
+    my @sorted_array
+        = map { $_->[0] }
+          sort { $a->[1] <=> $b->[1] }
+          map { [ $_, (split /$sep/)[0] ] }
+          @$re_array;
     return \@sorted_array;
 }
 
