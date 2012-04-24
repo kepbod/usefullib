@@ -55,25 +55,26 @@ sub ExtractInfo {
     croak "ExtractInfo can't in void context!\n" unless defined wantarray;
 
     my $file = shift;
-    open my $f,'<',$file or croak "Can't open $file: $1";
 
-    my ($chr, $sep) = _parameter_check(2, \@_, [qr(chr[0-9]{1,2}|all),
+    my ($chr, $sep) = _parameter_check(2, \@_, [qr(chr([0-9]{1,2}|X|Y)|all),
                       qr(\W)], ['all','-']);
 
     my (@gene_sta_end, @cds_sta_end, @exon_sta_end);
-    while (<$f>) {
+    while (<$file>) {
         chomp;
         my @line = split;
-        next if $chr ne 'all' and $chr ne $line[2];
-        push @gene_sta_end,$line[4] . '$seq' . $line[5];
-        push @cds_sta_end,$line[6] . '$seq' . $line[7];
+        if ($chr ne 'all') {
+            next if $chr ne $line[2];
+        }
+        push @gene_sta_end,$line[4] . $sep . $line[5];
+        push @cds_sta_end,$line[6] . $sep . $line[7];
         my @exonsta = split /,/,$line[9];
         my @exonend = split /,/,$line[10];
         for (0..$line[8]-1) {
             push @exon_sta_end,$exonsta[$_] . $sep . $exonend[$_];
         }
     }
-    close $f;
+    close $file;
     return (\@gene_sta_end, \@cds_sta_end, \@exon_sta_end)
 
 }
