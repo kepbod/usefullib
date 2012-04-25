@@ -37,8 +37,8 @@ our @EXPORT_OK = qw(ExtractInfo);
 
 # Name: ExtractInfo
 # Parameter: $file (file handle of refFlat)
-#            $chr (optional), $sep (optional)
-# Default Values: $chr='all', $sep = '-'
+#            $chr (optional), $sep (optional), $flag_of_info (optional)
+# Default Values: $chr='all', $sep = '-', $flag_of_info = 0
 # Return: \@tx_sta_end, \@cds_sta_end, \@exon_sta_end
 #
 # Function: Extract the start and end point of genes
@@ -56,8 +56,8 @@ sub ExtractInfo {
 
     my $file = shift;
 
-    my ($chr, $sep) = _parameter_check(2, \@_, [qr(chr([0-9]{1,2}|X|Y)|all),
-                      qr(\W)], ['all','-']);
+    my ($chr, $sep, $flag_of_info) = _parameter_check(3, \@_, [qr(chr([0-9]{1,2}|X|Y)|all),
+                                     qr(\W), qr(0|1)], ['all', '-', '0']);
 
     my (@gene_sta_end, @cds_sta_end, @exon_sta_end);
     while (<$file>) {
@@ -66,7 +66,8 @@ sub ExtractInfo {
         if ($chr ne 'all') {
             next if $chr ne $line[2];
         }
-        push @gene_sta_end,$line[4] . $sep . $line[5];
+        my $info = $flag_of_info ? "$sep$line[0]" : '';
+        push @gene_sta_end,$line[4] . $sep . $line[5] . $info;
         push @cds_sta_end,$line[6] . $sep . $line[7];
         my @exonsta = split /,/,$line[9];
         my @exonend = split /,/,$line[10];

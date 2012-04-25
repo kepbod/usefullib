@@ -172,10 +172,10 @@ sub OverlapMap {
         my $tag;
         # set tag according to flag
         $tag = '' if $flag1 == 0;
-        $tag = $out_sep . (split /$sep/,$read)[2] if $flag1 == 1;
-        $tag = $out_sep . (split /$sep/,$interval)[2] if $flag1 ==10;
-        $tag = $out_sep . (split /$sep/,$interval)[2] . $out_sep .
-               (split /$sep/,$read)[2] if $flag1 == 11;
+        $tag = $out_sep . (split /$sep/,$read,3)[-1] if $flag1 == 1;
+        $tag = $out_sep . (split /$sep/,$interval,3)[-1] if $flag1 ==10;
+        $tag = $out_sep . (split /$sep/,$interval,3)[-1] . $out_sep .
+               (split /$sep/,$read,3)[-1] if $flag1 == 11;
         my $tmp = $first . $out_sep . $second . $tag;
         push @mapped_array,$tmp; # output interval
         if ($second == (split /$sep/,$interval)[1]) { # exist over-through read
@@ -243,10 +243,10 @@ sub OverlapMerge {
         if($first < $second) {
             my $tag;
             $tag = '' if $flag1 == 0;
-            $tag = $out_sep . (split /$sep/,$interval2)[2] if $flag1 == 1;
-            $tag = $out_sep . (split /$sep/,$interval1)[2] if $flag1 == 10;
-            $tag = $out_sep . (split /$sep/,$interval1)[2] . $out_sep .
-                   (split /$sep/,$interval2)[2] if $flag1 == 11;
+            $tag = $out_sep . (split /$sep/,$interval2,3)[-1] if $flag1 == 1;
+            $tag = $out_sep . (split /$sep/,$interval1,3)[-1] if $flag1 == 10;
+            $tag = $out_sep . (split /$sep/,$interval1,3)[-1] . $out_sep .
+                   (split /$sep/,$interval2,3)[-1] if $flag1 == 11;
             my $tmp = $first . $out_sep . $second . $tag;
             push @merged_array,$tmp;
         }
