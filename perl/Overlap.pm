@@ -10,7 +10,7 @@ use warnings;
 use Carp;
 
 our $AUTHOR = "Xiao'ou Zhang";
-our $VERSION = "0.1.0";
+our $VERSION = "0.2.0";
 
 require Exporter;
 our @ISA = qw(Exporter);
