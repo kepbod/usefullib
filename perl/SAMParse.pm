@@ -22,7 +22,7 @@ our @EXPORT_OK = qw(ReadSplit);
 # Name: ReadSplit
 # Parameter: $position, $cigar, $seperator (optional), $flag (optional)
 # Default: $seperator = \s
-# Return: @intervals (return the pointer to @intervals in scalar context)
+# Return: \@intervals
 #
 # Function: Convert the read into split segments.
 #
@@ -31,6 +31,9 @@ our @EXPORT_OK = qw(ReadSplit);
 #          1               1         2               2     3      3
 #
 sub ReadSplit {
+
+    # if in void context
+    croak "ReadSplit can't in void context!\n" unless defined wantarray;
 
     # cope with parameters
     my $pos1 = shift; # $pos1: $position
@@ -69,7 +72,7 @@ sub ReadSplit {
         }
     }
     push @intervals,$pos1 . $sep . $pos2 . $flag unless $pos1 == $pos2;
-    return wantarray ? @intervals : \@intervals;
+    return \@intervals;
 }
 
 ##########Internal Subroutine##########

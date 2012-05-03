@@ -44,6 +44,7 @@ our @EXPORT_OK = qw(ExtractInfo);
 #         8                       9                 10            11
 #
 
+#
 # Name: ExtractInfo
 # Parameter: $file (file handle of RefFile), $name,
 #            $chr (optional), $sep (optional), $flag_of_gene_info (optional),
@@ -53,7 +54,7 @@ our @EXPORT_OK = qw(ExtractInfo);
 # Return: \@tx_sta_end, \@cds_sta_end, \@exon_sta_end (if $flag_of_gene_index = 0)
 #         \%exon_sta_end (if $flag_of_gene_index = 1)
 #
-# Function: Extract the start and end point of genes
+# Function: Extract info from reference file
 #
 # Notice: If you don't want to indicate chr, please input "all" instead.
 #         If $flag_of_gene_info is 0, then $flag_of_gene_index and

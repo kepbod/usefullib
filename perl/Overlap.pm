@@ -85,8 +85,7 @@ sub OverlapMax {
     }
     unshift @$re_sorted_array,$first_data; # recover $old_array
     push @new_array,$interval1; # push the last interval into @new_array
-    # return new array according to context
-    return \@new_array;
+    return \@new_array; # return new array reference
 
 }
 
@@ -186,8 +185,7 @@ sub OverlapMap {
         }
         goto LABEL; # read next read
     }
-    # return new array according to context
-    return \@mapped_array;
+    return \@mapped_array; # return mapped array reference
 }
 
 #
@@ -207,7 +205,7 @@ sub OverlapMap {
 sub OverlapMerge {
 
     # if in void context
-    croak "OverlapMax can't in void context!\n" unless defined wantarray;
+    croak "OverlapMerge can't in void context!\n" unless defined wantarray;
 
     # initiate internal parameters
     my ($out_sep, @merged_array);
@@ -254,8 +252,7 @@ sub OverlapMerge {
             last;
         }
     }
-    # return new array according to context
-    return \@merged_array;
+    return \@merged_array; # return merged array reference
 }
 
 ##########Internal Subroutine##########
