@@ -70,7 +70,7 @@ sub ExtractInfo {
 
     my ($chr, $sep, $flag_of_gene_info, $flag_of_gene_index,
         $flag_of_excluding_sole_exon)
-        = _parameter_check(5, \@_, [qr(chr([0-9]{1,2}|X|Y)|all),
+        = _parameter_check(5, \@_, [qr(chr([0-9]{1,2}|X|Y|M)|all),
             qr(\W), qr(0|1), qr(0|1), qr(0|1)], ['all', '-', '0', '0', '0']);
 
     if ($flag_of_gene_info == 0) {
@@ -93,6 +93,7 @@ sub ExtractInfo {
         }
 
         if (!$flag_of_gene_index) {
+            $genename =~ s/-/#/g;
             my $info = $flag_of_gene_info ? "$sep$genename" : '';
             push @gene_sta_end,$txsta . $sep . $txend . $info;
             push @cds_sta_end,$cdssta . $sep . $cdsend . $info;
