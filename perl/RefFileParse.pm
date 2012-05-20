@@ -98,10 +98,10 @@ sub ExtractInfo {
         }
 
         # set gene info
+        $genename =~ s/-/#/g; # substitute '-' with '#' in case split errors
         my $info = $flag_of_gene_info ? "$sep$genename" : '';
 
         if (!$flag_of_gene_index) {
-            $genename =~ s/-/#/g; # substitute '-' with '#' in case split errors
             push @gene_sta_end,$txsta . $sep . $txend . $info;
             push @cds_sta_end,$cdssta . $sep . $cdsend . $info;
         }
