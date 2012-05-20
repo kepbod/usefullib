@@ -10,7 +10,7 @@ use warnings;
 use Carp;
 
 our $AUTHOR = "Xiao'ou Zhang";
-our $VERSION = "0.3.0";
+our $VERSION = "0.5.0";
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -51,7 +51,7 @@ our @EXPORT_OK = qw(ExtractInfo);
 #            $flag_of_gene_index (optional), $flag_of_excluding_sole_exon (optional)
 # Default Values: $chr='all', $sep = '-', $flag_of_gene_info = 0
 #                 $flag_of_gene_index = 0, $flag_of_excluding_sole_exon = 0
-# Return: \@tx_sta_end, \@cds_sta_end, \@exon_sta_end (if $flag_of_gene_index = 0)
+# Return: \@tx_sta_end, \@cds_sta_end, \@exon_sta_end, \@intron_sta_end (if $flag_of_gene_index = 0)
 #         \%exon_sta_end (if $flag_of_gene_index = 1)
 #
 # Function: Extract info from reference file
@@ -65,53 +65,67 @@ sub ExtractInfo {
     # if in void context
     croak "ExtractInfo can't in void context!\n" unless defined wantarray;
 
+    # use filename to distinguish different reference files
     my $file = shift;
     my $filename = shift;
 
+    # check optional parameters
     my ($chr, $sep, $flag_of_gene_info, $flag_of_gene_index,
         $flag_of_excluding_sole_exon)
         = _parameter_check(5, \@_, [qr(chr([0-9]{1,2}|X|Y|M)|all),
             qr(\W), qr(0|1), qr(0|1), qr(0|1)], ['all', '-', '0', '0', '0']);
 
+    # if not need gene info, other parameters about gene will be set 0 automatically
     if ($flag_of_gene_info == 0) {
         $flag_of_gene_index = 0;
         $flag_of_excluding_sole_exon = 0;
     }
 
-    my (@gene_sta_end, @cds_sta_end, @exon_sta_end, %exon_sta_end);
+    # initiate parameters
+    my (@gene_sta_end, @cds_sta_end, @exon_sta_end, @intron_sta_end, %exon_sta_end);
 
-    while (<$file>) {
+    while (<$file>) { # read file
 
         chomp;
+        # get info according to file schema
         my ($genename, $txname, $chrom, $strand, $txsta, $txend, $cdssta,
             $cdsend, $exonnum, $exonsta, $exonend)
             = _linesplit($filename, $_);
-        my @single_gene_exon_sta_end;
+        my (@single_gene_exon_sta_end, @single_gene_intron_sta_end);
 
-        if ($chr ne 'all') {
+        if ($chr ne 'all') { # if indicate chr info
             next if $chr ne $chrom;
         }
 
+        # set gene info
+        my $info = $flag_of_gene_info ? "$sep$genename" : '';
+
         if (!$flag_of_gene_index) {
-            $genename =~ s/-/#/g;
-            my $info = $flag_of_gene_info ? "$sep$genename" : '';
+            $genename =~ s/-/#/g; # substitute '-' with '#' in case split errors
             push @gene_sta_end,$txsta . $sep . $txend . $info;
             push @cds_sta_end,$cdssta . $sep . $cdsend . $info;
         }
         else{
+            # exclude sole exon according to flag
             next if $flag_of_excluding_sole_exon and $exonnum == 1;
         }
 
+        # get exon info
         my @exonsta = split /,/,$exonsta;
         my @exonend = split /,/,$exonend;
-        for (0..$exonnum-1) {
-            push @single_gene_exon_sta_end,$exonsta[$_] . $sep . $exonend[$_];
+        for (0..$exonnum-1) { # exon edge 
+            push @single_gene_exon_sta_end,$exonsta[$_] . $sep . $exonend[$_] .  $info;
+        }
+        for (1..$exonnum-1) { # intron edge 
+            push @single_gene_intron_sta_end,$exonend[$_ - 1] . $sep .  $exonsta[$_] . $info;
         }
 
         if (!$flag_of_gene_index) {
             push @exon_sta_end,@single_gene_exon_sta_end;
+            push @intron_sta_end,@single_gene_intron_sta_end;
         }
         else {
+            # use chr and gene name together in case two same genes in different chromosomes
             my $info = $chrom . ':' . $genename;
             if (exists $exon_sta_end{$info}) {
                 push @{$exon_sta_end{$info}},@single_gene_exon_sta_end;
@@ -124,8 +138,9 @@ sub ExtractInfo {
     }
     close $file;
 
+    # output according to flags
     if (!$flag_of_gene_index) {
-        return (\@gene_sta_end, \@cds_sta_end, \@exon_sta_end);
+        return (\@gene_sta_end, \@cds_sta_end, \@exon_sta_end, \@intron_sta_end);
     }
     else {
         return (\%exon_sta_end)
