@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $AUTHOR = "Xiao'ou Zhang";
+our $AUTHOR = "Xiaoou Zhang";
 our $VERSION = "0.2.0";
 
 require Exporter;
@@ -34,7 +34,7 @@ our @EXPORT_OK = qw(OverlapMax OverlapMap OverlapMerge);
 sub OverlapMax {
 
     # if in void context
-    croak "OverlapMax can't in void context!\n" unless defined wantarray;
+    croak "OverlapMax can't in void context!" unless defined wantarray;
 
     # initiate internal parameters
     my ($out_sep, $re_sorted_array, @new_array, $first_data, $interval1);
@@ -42,7 +42,7 @@ sub OverlapMax {
     my $re_old_array = shift; # $re_old_array: \@old_array
 
     # no elements in array
-    croak "Your array has no elements!\n" unless @$re_old_array;
+    croak "Your array has no elements!" unless @$re_old_array;
 
     # check optional parameters
     # $sep: $seperator, $flag1: $flag_of_containing_tag, $flag2: $flag_of_sorted
@@ -115,7 +115,7 @@ sub OverlapMax {
 sub OverlapMap {
 
     # if in void context
-    croak "OverlapMap can't in void context!\n" unless defined wantarray;
+    croak "OverlapMap can't in void context!" unless defined wantarray;
 
     # initiate internal parameters
     my ($out_sep, $re_sorted_map_array, @mapped_array, $read, @tmp_array);
@@ -124,7 +124,7 @@ sub OverlapMap {
     my $re_map_array = shift; # $re_map_array: \@map_array
 
     # no elements in arrays
-    croak "Your arrays have no elements!\n" if not @$re_map_to_array
+    croak "Your arrays have no elements!" if not @$re_map_to_array
         or not @$re_map_array;
 
     # check optional parameters
@@ -205,7 +205,7 @@ sub OverlapMap {
 sub OverlapMerge {
 
     # if in void context
-    croak "OverlapMerge can't in void context!\n" unless defined wantarray;
+    croak "OverlapMerge can't in void context!" unless defined wantarray;
 
     # initiate internal parameters
     my ($out_sep, @merged_array);
@@ -215,7 +215,7 @@ sub OverlapMerge {
     my $re_array2 = shift; # $re_array2: \@array2
 
     # no elements in arrays
-    croak "Your arrays have no elements!\n" if not @$re_array1
+    croak "Your arrays have no elements!" if not @$re_array1
         or not @$re_array2;
 
     # check optional parameters
@@ -273,7 +273,7 @@ sub _parameter_check {
             unless ($$re_old_parameter[$_] =~ $$re_value[$_]) {
                 my $pos = $_ + 1;
                 my $subroutine = (caller 1)[3];
-                croak "Errors with $subroutine optional parameter $pos \n";
+                croak "Errors with $subroutine optional parameter $pos!";
             }
         }
     }

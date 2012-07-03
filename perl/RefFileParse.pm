@@ -2,14 +2,14 @@ package RefFileParse;
 
 #
 # Module Name: RefFileParse.pm
-# Function: Parse reference file.
+# Function: Parse reference files.
 #
 
 use strict;
 use warnings;
 use Carp;
 
-our $AUTHOR = "Xiao'ou Zhang";
+our $AUTHOR = "Xiaoou Zhang";
 our $VERSION = "0.5.0";
 
 require Exporter;
@@ -63,7 +63,7 @@ our @EXPORT_OK = qw(ExtractInfo);
 sub ExtractInfo {
 
     # if in void context
-    croak "ExtractInfo can't in void context!\n" unless defined wantarray;
+    croak "ExtractInfo can't in void context!" unless defined wantarray;
 
     # use filename to distinguish different reference files
     my $file = shift;
@@ -166,7 +166,7 @@ sub _parameter_check {
             unless ($$re_old_parameter[$_] =~ $$re_value[$_]) {
                 my $pos = $_ + 1;
                 my $subroutine = (caller 1)[3];
-                croak "Errors with $subroutine optional parameter $pos \n";
+                croak "Errors with $subroutine optional parameter $pos!";
             }
         }
     }
@@ -190,7 +190,7 @@ sub _linesplit {
         $exonnum, $exonsta, $exonend) = (split /\s/,$line)[0..9];
     }
     else {
-        croak "Can't parse $filename file!\n";
+        croak "Can't parse $filename file!";
     }
     return ($genename, $txname, $chrom, $strand, $txsta, $txend, $cdssta,
             $cdsend, $exonnum, $exonsta, $exonend);

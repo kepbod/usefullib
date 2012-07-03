@@ -33,7 +33,7 @@ our @EXPORT_OK = qw(ReadSplit);
 sub ReadSplit {
 
     # if in void context
-    croak "ReadSplit can't in void context!\n" unless defined wantarray;
+    croak "ReadSplit can't in void context!" unless defined wantarray;
 
     # cope with parameters
     my $pos1 = shift; # $pos1: $position
@@ -93,7 +93,7 @@ sub _parameter_check {
             unless ($$re_old_parameter[$_] =~ $$re_value[$_]) {
                 my $pos = $_ + 1;
                 my $subroutine = (caller 1)[3];
-                croak "Errors with $subroutine optional parameter $pos \n";
+                croak "Errors with $subroutine optional parameter $pos!";
             }
         }
     }
