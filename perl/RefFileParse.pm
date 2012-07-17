@@ -117,6 +117,7 @@ sub ExtractInfo {
             push @single_gene_exon_sta_end,$exonsta[$_] . $sep . $exonend[$_] .  $info;
         }
         for (1..$exonnum-1) { # intron edge 
+            next if $exonend[$_ - 1] == $exonsta[$_];
             push @single_gene_intron_sta_end,$exonend[$_ - 1] . $sep .  $exonsta[$_] . $info;
         }
 

@@ -1,10 +1,8 @@
-#!/usr/bin/env python3
-
 '''
 title: interval.py
 description: Cope with intervals.
 author: Xiaoou Zhang
-version: 0.1.0
+version: 0.4.0
 '''
 
 import copy
@@ -16,7 +14,7 @@ class Interval:
 
     Maintainer: Xiaoou Zhang
 
-    Version: 0.1.0
+    Version: 0.4.0
 
     Usage: a = Interval(list)
            (list: [[x,x,f1...],[x,x,f2...]...] / [[x,x],[x,x]...])
@@ -29,17 +27,19 @@ class Interval:
                c = a * b or a *= b
                c = a - b or a -= b
                a.complement([sta, end])
-               a.overlapwith(b)
-               a.overlapwithout(b)
+               a.extractwith(b)
+               a.extractwithout(b)
     '''
     def __init__(self, interval, instance_flag=0):
-        self.interval = interval
+        self.interval = [[int(i[0]), int(i[1])] + i[2:] for i in interval]
+        if not self.interval:
+            return
         if not instance_flag:
             self.interval.sort()
             tmp = []
             a = self.interval[0]
             for b in self.interval[1:]:
-                if a[1] <= b[0]:
+                if a[1] < b[0]:
                     tmp.append(a)
                     a = b
                 else:
@@ -65,7 +65,7 @@ class Interval:
         Usage: a += b
         extract union intervals, 'a' should be instance.
         '''
-        return Interval.__add__(self, interval)
+        return self.__add__(interval)
 
     def __mul__(self, interval, real_flag=1):
         '''
@@ -73,12 +73,15 @@ class Interval:
         extract intersection intervals, 'a' should be instance.
         '''
         tmp = []
-        tmp1 = copy.deepcopy(self.interval)
+        tmp1 = self.interval
         if isinstance(interval, Interval):
-            tmp2 = copy.deepcopy(interval.interval)
+            tmp2 = interval.interval
         else:
-            tmp2 = copy.deepcopy(Interval(interval).interval)
-        a, b = tmp1.pop(0), tmp2.pop(0)
+            tmp2 = Interval(interval).interval
+        if not tmp1 or not tmp2:
+            return Interval([])
+        a, b = tmp1[0], tmp2[0]
+        i, j = 1, 1
         while True:
             sta = a[0] if a[0] > b[0] else b[0]
             end = a[1] if a[1] < b[1] else b[1]
@@ -86,17 +89,17 @@ class Interval:
                 if real_flag:
                     tmp.append([sta, end] + a[2:] + b[2:])
                 else:
-                    tmp.append(a)
+                    tmp.append(copy.copy(a))
             if a[1] == end:
-                try:
-                    a = tmp1.pop(0)
-                except IndexError:
+                if i == len(tmp1):
                     break
+                a = tmp1[i]
+                i += 1
             if b[1] == end:
-                try:
-                    b = tmp2.pop(0)
-                except IndexError:
+                if j == len(tmp2):
                     break
+                b = tmp2[j]
+                j += 1
         return Interval(tmp, 1)
 
     def __imul__(self, interval):
@@ -104,35 +107,38 @@ class Interval:
         Usage: a *= b
         extract intersection intervals, 'a' should be instance.
         '''
-        return Interval.__mul__(self, interval)
+        return self.__mul__(interval)
 
     def __sub__(self, interval, real_flag=1):
         '''
         Usage: c = a - b
         extract difference intervals, 'a' should be instance.
         '''
-        tmp1 = copy.deepcopy(self)
+        if not self.interval:
+            return Interval([])
         if isinstance(interval, Interval):
-            tmp2 = copy.deepcopy(interval)
+            tmp = copy.deepcopy(interval)
         else:
-            tmp2 = copy.deepcopy(Interval(interval))
-        if tmp1.interval[0][0] < tmp2.interval[0][0]:
-            sta = tmp1.interval[0][0]
+            tmp = Interval(interval)
+        if not tmp:
+            return copy.deepcopy(self)
+        if self.interval[0][0] < tmp.interval[0][0]:
+            sta = self.interval[0][0]
         else:
-            sta = tmp2.interval[0][0]
-        if tmp1.interval[-1][1] > tmp2.interval[-1][1]:
-            end = tmp1.interval[-1][1]
+            sta = tmp.interval[0][0]
+        if self.interval[-1][1] > tmp.interval[-1][1]:
+            end = self.interval[-1][1]
         else:
-            end = tmp2.interval[-1][1]
-        tmp2.complement(sta, end)
-        return Interval.__mul__(tmp1, tmp2, real_flag)
+            end = tmp.interval[-1][1]
+        tmp.complement(sta, end)
+        return self.__mul__(tmp, real_flag)
 
     def __isub__(self, interval):
         '''
         Usage: a -= b
         extract difference intervals, 'a' should be instance.
         '''
-        return Interval.__sub__(self, interval)
+        return self.__sub__(interval)
 
     def complement(self, sta='#', end='#'):
         '''
@@ -151,16 +157,16 @@ class Interval:
             tmp.append([a, end])
         self.interval = tmp
 
-    def overlapwith(self, interval):
+    def extractwith(self, interval):
         '''
-        Usage: a.overlapwith(b)
+        Usage: a.extractwith(b)
         extract intervals in 'b'.
         '''
-        self.interval = Interval.__mul__(self, interval, 0).interval
+        self.interval = self.__mul__(interval, 0).interval
 
-    def overlapwithout(self, interval):
+    def extractwithout(self, interval):
         '''
-        Usage: a.overlapwithout(b)
+        Usage: a.extractwithout(b)
         extract intervals not in 'b'.
         '''
-        self.interval = Interval.__sub__(self, interval, 0).interval
+        self.interval = self.__sub__(interval, 0).interval

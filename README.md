@@ -18,7 +18,7 @@ PS: '/path/to/usefullib' is a random pathway you like.
 **For Python Modules**
 
 > Add `import sys`, `sys.path.insert(0,'/path/to/usefullib/python/')` and
-> `from ModuleName import Class/Function` or `import ModuleName` to your perl
+> `from ModuleName import Class/Function` or `import ModuleName` to your python
 > scripts.  
 > PS: 'ModuleName' and 'Class/Function' are set according to your needs.
 
