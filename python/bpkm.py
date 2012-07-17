@@ -71,4 +71,4 @@ if __name__ == '__main__':
             for line in f:
                 chrom, sta, end = line.split()[0:3]
                 bpkm = calculatebpkm(chrom, sta, end, bam, size, length)
-                outf.write('{}:{}-{}\t{}'.format(chrom, sta, end, bpkm))
+                outf.write('{}:{}-{}\t{}\n'.format(chrom, sta, end, bpkm))
