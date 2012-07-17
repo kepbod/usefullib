@@ -8,7 +8,7 @@ version: 0.1.0
 
 import sys
 sys.path.insert(0, '/picb/rnomics1/xiaoou/program/usefullib/python')
-from map import Map
+from map import mapto
 from subprocess import Popen, PIPE
 import os
 
@@ -31,10 +31,9 @@ def calculatebpkm(chrom, sta, end, bam, total, length):
             read_segments.extend(segment)
     if not read_segments:
         return 0
-    mapped_read_segments = Map(read_segments)
-    mapped_read_segments.mapto([[sta, end]])
+    mapped_read_segments = mapto(read_segments, [[sta, end]])
     base = 0
-    for segment in mapped_read_segments.mapping:
+    for segment in mapped_read_segments:
         base += segment[1] - segment[0]
     return (base * pow(10, 9)) / (total * length * (end - sta))
 

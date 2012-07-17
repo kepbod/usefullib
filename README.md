@@ -37,6 +37,10 @@ PS: '/path/to/usefullib' is a random pathway you like.
     Functions: ReadSplit
 * [interval.py](https://github.com/kepbod/usefullib/blob/master/python/interval.py): Cope with intervals  
     Class: Interval
+* [map.py](https://github.com/kepbod/usefullib/blob/master/python/map.py): Deal with mapping.
+    Functions: mapto, overlapwith
+* [bpkm.py](https://github.com/kepbod/usefullib/blob/master/python/bpkm.py): Calculate BPKM.
+    Functions: calculatebpkm
 
 ## Notice
 
