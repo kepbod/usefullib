@@ -1,6 +1,5 @@
 '''
-title: map.py
-description: Deal with mapping.
+map.py - Deal with mapping.
 author: Xiaoou Zhang
 version: 0.2.0
 '''
@@ -56,12 +55,20 @@ def __map(index, interval, flag):
 
 
 def mapto(interval, index):
+    '''
+    mapto(interval, index) -> interval
+    Map interval onto index.
+    '''
     tmp1 = __init(interval)
     tmp2 = __init(index)
     return __map(tmp2, tmp1, flag=1)
 
 
 def overlapwith(index, interval):
+    '''
+    overlapwith(index, interval) -> index
+    Overlap index with interval.
+    '''
     tmp1 = __init(index)
     tmp2 = __init(interval)
     return __map(tmp1, tmp2, flag=0)

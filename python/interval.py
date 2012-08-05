@@ -1,6 +1,5 @@
 '''
-title: interval.py
-description: Cope with intervals.
+interval.py - Cope with intervals.
 author: Xiaoou Zhang
 version: 0.4.0
 '''

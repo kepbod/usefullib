@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 '''
-title: bpkm.py
-description: Calculate BPKM.
+bpkm.py - Calculate BPKM.
 author: Xiaoou Zhang
-version: 0.1.0
+version: 0.2.0
 '''
 
 import sys
@@ -14,6 +13,10 @@ import os
 
 
 def calculatebpkm(chrom, sta, end, bam, total, length):
+    '''
+    calculatebpkm(chrom, sta, end, bam, total, length) -> bpkm
+    Calculate BPKM.
+    '''
     sta = int(sta)
     end = int(end)
     total = int(total)
@@ -39,6 +42,10 @@ def calculatebpkm(chrom, sta, end, bam, total, length):
 
 
 def readsplit(pos1, cigar):
+    '''
+    readsplit(pos, cigar) -> interval
+    Split reads.
+    '''
     pos2, num = (int(pos1), '')
     interval = []
     for i in cigar:
