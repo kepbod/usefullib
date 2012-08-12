@@ -66,7 +66,7 @@ sub OverlapMax {
     }
     for my $interval2 (@$re_sorted_array) { # loop if the array is not end
         # if $interval1 and $interval2 have overlaps
-        if ((split /$sep/,$interval1)[1] >= (split /$sep/,$interval2)[0]) {
+        if ((split /$sep/,$interval1)[1] > (split /$sep/,$interval2)[0]) {
             my $tmp = (split /$sep/,$interval1)[1] > (split /$sep/,$interval2)[1] ?
                       (split /$sep/,$interval1)[1] : (split /$sep/,$interval2)[1];
             if ($flag1) { # if have tags

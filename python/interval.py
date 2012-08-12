@@ -38,7 +38,7 @@ class Interval:
             tmp = []
             a = self.interval[0]
             for b in self.interval[1:]:
-                if a[1] < b[0]:
+                if a[1] <= b[0]:
                     tmp.append(a)
                     a = b
                 else:
@@ -99,7 +99,10 @@ class Interval:
                     break
                 b = tmp2[j]
                 j += 1
-        return Interval(tmp, 1)
+        if real_flag:
+            return Interval(tmp, 1)
+        else:
+            return Interval(tmp, 0)
 
     def __imul__(self, interval):
         '''
@@ -150,7 +153,8 @@ class Interval:
         a = self.interval[0][1]
         for item in self.interval[1:]:
             b = item[0]
-            tmp.append([a, b])
+            if a != b:
+                tmp.append([a, b])
             a = item[1]
         if end != '#' and end > a:
             tmp.append([a, end])

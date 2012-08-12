@@ -12,9 +12,9 @@ from subprocess import Popen, PIPE
 import os
 
 
-def calculatebpkm(chrom, sta, end, bam, total, length):
+def calculatebpkm(chrom, sta, end, bam, total=0, length=0, getsegment=False):
     '''
-    calculatebpkm(chrom, sta, end, bam, total, length) -> bpkm
+    calculatebpkm(chrom, sta, end, bam, total, length, getsegment) -> bpkm
     Calculate BPKM.
     '''
     sta = int(sta)
@@ -35,10 +35,13 @@ def calculatebpkm(chrom, sta, end, bam, total, length):
     if not read_segments:
         return 0
     mapped_read_segments = mapto(read_segments, [[sta, end]])
-    base = 0
-    for segment in mapped_read_segments:
-        base += segment[1] - segment[0]
-    return (base * pow(10, 9)) / (total * length * (end - sta))
+    if not getsegment:
+        base = 0
+        for segment in mapped_read_segments:
+            base += segment[1] - segment[0]
+        return (base * pow(10, 9)) / (total * length * (end - sta))
+    else:
+        return mapped_read_segments
 
 
 def readsplit(pos1, cigar):

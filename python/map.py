@@ -46,7 +46,7 @@ def __map(index, interval, flag):
                 mapped_fragment.append(new_fragment)
                 if fragment[1] > dex[1]:
                     tmp_fragment.append([dex[1],
-                            fragment[1]] + fragment[2:])
+                                        fragment[1]] + fragment[2:])
     else:
         if flag:
             return mapped_fragment
