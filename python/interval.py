@@ -1,7 +1,7 @@
 '''
 interval.py - Cope with intervals.
 author: Xiaoou Zhang
-version: 0.4.0
+version: 0.5.0
 '''
 
 import copy
@@ -13,7 +13,7 @@ class Interval:
 
     Maintainer: Xiaoou Zhang
 
-    Version: 0.4.0
+    Version: 0.5.0
 
     Usage: a = Interval(list)
            (list: [[x,x,f1...],[x,x,f2...]...] / [[x,x],[x,x]...])
@@ -25,6 +25,7 @@ class Interval:
     Functions: c = a + b or a += b
                c = a * b or a *= b
                c = a - b or a -= b
+               a[n] or a[n:m]
                a.complement([sta, end])
                a.extractwith(b)
                a.extractwithout(b)
@@ -49,7 +50,7 @@ class Interval:
 
     def __add__(self, interval):
         '''
-        Usage: c = a + b
+        Usage: c = a + b or a += b
         extract union intervals, 'a' should be instance.
         '''
         tmp = copy.deepcopy(self.interval)
@@ -59,16 +60,9 @@ class Interval:
             tmp.extend(interval)
         return Interval(tmp)
 
-    def __iadd__(self, interval):
-        '''
-        Usage: a += b
-        extract union intervals, 'a' should be instance.
-        '''
-        return self.__add__(interval)
-
     def __mul__(self, interval, real_flag=1):
         '''
-        Usage: c = a * b
+        Usage: c = a * b or a *= b
         extract intersection intervals, 'a' should be instance.
         '''
         tmp = []
@@ -104,16 +98,9 @@ class Interval:
         else:
             return Interval(tmp, 0)
 
-    def __imul__(self, interval):
-        '''
-        Usage: a *= b
-        extract intersection intervals, 'a' should be instance.
-        '''
-        return self.__mul__(interval)
-
     def __sub__(self, interval, real_flag=1):
         '''
-        Usage: c = a - b
+        Usage: c = a - b or a -= b
         extract difference intervals, 'a' should be instance.
         '''
         if not self.interval:
@@ -135,12 +122,18 @@ class Interval:
         tmp.complement(sta, end)
         return self.__mul__(tmp, real_flag)
 
-    def __isub__(self, interval):
+    def __getitem__(self, index):
         '''
-        Usage: a -= b
-        extract difference intervals, 'a' should be instance.
+        Usage: a[n] or a[n:m]
+        intercept index and slice on interval objects.
         '''
-        return self.__sub__(interval)
+        return self.interval[index]
+
+    def __repr__(self):
+        '''
+        print objects.
+        '''
+        return repr(self.interval)
 
     def complement(self, sta='#', end='#'):
         '''

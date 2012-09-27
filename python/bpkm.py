@@ -71,14 +71,21 @@ def readsplit(pos1, cigar):
     return interval
 
 if __name__ == '__main__':
-    if len(sys.argv) != 5:
-        print('bpkm.py *.bed *.bam size length')
+    if len(sys.argv) != 4:
+        print('bpkm.py *.bed *.bam length')
         sys.exit(0)
     name = os.path.splitext(os.path.split(sys.argv[1])[1])[0]
-    bam, size, length = sys.argv[2:5]
+    bam, length = sys.argv[2:5]
+    size = 0
+    with Popen(['samtools', 'idxstats', bam], stdout=PIPE) as proc:
+        for line in proc.stdout:
+            str_line = line.decode('utf-8')
+            size += int(str_line.split()[2])
     with open(sys.argv[1], 'r') as f:
         with open('{}.bpkm'.format(name), 'w') as outf:
             for line in f:
-                chrom, sta, end = line.split()[0:3]
+                chrom, sta, end, *remaining = line.split()
                 bpkm = calculatebpkm(chrom, sta, end, bam, size, length)
-                outf.write('{}:{}-{}\t{}\n'.format(chrom, sta, end, bpkm))
+                pos = '{}:{}-{}'.format(chrom, sta, end)
+                result = '\t'.join([pos, str(bpkm)] + remaining)
+                outf.write('{}\n'.format(result))

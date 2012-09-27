@@ -184,11 +184,11 @@ sub _linesplit {
         $exonnum, $exonsta, $exonend);
     if ($filename eq 'refFlat') {
         ($genename, $txname, $chrom, $strand, $txsta, $txend, $cdssta, $cdsend,
-        $exonnum, $exonsta, $exonend) = split /\s/,$line;
+        $exonnum, $exonsta, $exonend) = split /\t/,$line;
     }
     elsif ($filename eq 'knownGene') {
         ($genename, $chrom, $strand, $txsta, $txend, $cdssta, $cdsend,
-        $exonnum, $exonsta, $exonend) = (split /\s/,$line)[0..9];
+        $exonnum, $exonsta, $exonend) = (split /\t/,$line)[0..9];
     }
     else {
         croak "Can't parse $filename file!";
