@@ -34,10 +34,10 @@ if __name__ == '__main__':
         print 'bpkm_new2.py *.bed *.bam length'
         sys.exit(0)
     name = os.path.splitext(os.path.split(sys.argv[1])[1])[0]
-    bam, length = sys.argv[2:5]
+    bam, length = sys.argv[2:4]
     f = open(sys.argv[1], 'r')
     bamf = pysam.Samfile(bam, 'rb')
-    size = bamf.mapped()
+    size = bamf.mapped
     outf = open('%s.bpkm' % (name), 'w')
     for line in f:
         chrom, sta, end = line.split()[0:3]
