@@ -41,6 +41,8 @@ PS: '/path/to/usefullib' is a random pathway you like.
     Functions: mapto, overlapwith
 * [bpkm.py](https://github.com/kepbod/usefullib/blob/master/python/bpkm.py): Calculate BPKM.
     Functions: calculatebpkm
+* [bpkm_new.py](https://github.com/kepbod/usefullib/blob/master/python/bpkm_new.py): Calculate BPKM for SAM file.
+* [bpkm_new2.py](https://github.com/kepbod/usefullib/blob/master/python/bpkm_new2.py): Calculate BPKM. Very fast.
 
 ## Notice
 

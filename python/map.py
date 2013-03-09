@@ -1,7 +1,7 @@
 '''
 map.py - Deal with mapping.
 author: Xiaoou Zhang
-version: 0.2.0
+version: 0.3.0
 '''
 
 
@@ -27,6 +27,7 @@ def __map(index, interval, flag):
             except IndexError:
                 if tmp_fragment:
                     interval.extend(tmp_fragment)
+                    tmp_fragment = []
                     continue
                 else:
                     if flag:

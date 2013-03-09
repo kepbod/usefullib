@@ -1,7 +1,7 @@
 '''
 interval.py - Cope with intervals.
 author: Xiaoou Zhang
-version: 0.5.0
+version: 0.6.0
 '''
 
 import copy
@@ -13,7 +13,7 @@ class Interval:
 
     Maintainer: Xiaoou Zhang
 
-    Version: 0.5.0
+    Version: 0.6.0
 
     Usage: a = Interval(list)
            (list: [[x,x,f1...],[x,x,f2...]...] / [[x,x],[x,x]...])
@@ -23,15 +23,20 @@ class Interval:
     Attributes: interval
 
     Functions: c = a + b or a += b
+               c = b + a
                c = a * b or a *= b
+               c = b * a
                c = a - b or a -= b
+               c = b - a
                a[n] or a[n:m]
+               [x, x] in a or [[x, x], [x, x]] not in a
                a.complement([sta, end])
                a.extractwith(b)
                a.extractwithout(b)
     '''
     def __init__(self, interval, instance_flag=0):
-        self.interval = [[int(i[0]), int(i[1])] + i[2:] for i in interval]
+        self.interval = [[int(i[0]), int(i[1])] + i[2:]
+                         for i in Interval.convert(interval)]
         if not self.interval:
             return
         if not instance_flag:
@@ -57,8 +62,15 @@ class Interval:
         if isinstance(interval, Interval):
             tmp.extend(interval.interval)
         else:
-            tmp.extend(interval)
+            tmp.extend(Interval.convert(interval))
         return Interval(tmp)
+
+    def __radd__(self, interval):
+        '''
+        Usage: c = b + a
+        extract union intervals, 'a' should be instance.
+        '''
+        return self.__add__(interval)
 
     def __mul__(self, interval, real_flag=1):
         '''
@@ -93,10 +105,14 @@ class Interval:
                     break
                 b = tmp2[j]
                 j += 1
-        if real_flag:
-            return Interval(tmp, 1)
-        else:
-            return Interval(tmp, 0)
+        return Interval(tmp, 1)
+
+    def __rmul__(self, interval):
+        '''
+        Usage: c = b * a
+        extract intersection intervals, 'a' should be instance.
+        '''
+        return self.__mul__(interval)
 
     def __sub__(self, interval, real_flag=1):
         '''
@@ -122,6 +138,31 @@ class Interval:
         tmp.complement(sta, end)
         return self.__mul__(tmp, real_flag)
 
+    def __rsub__(self, interval):
+        '''
+        Usage: c = b - a
+        extract difference intervals, 'a' should be instance.
+        '''
+        if isinstance(interval, Interval):
+            tmp = copy.deepcopy(interval)
+        else:
+            tmp = Interval(interval)
+        if not self.interval:
+            return tmp
+        if not tmp:
+            return Interval([])
+        if self.interval[0][0] < tmp.interval[0][0]:
+            sta = self.interval[0][0]
+        else:
+            sta = tmp.interval[0][0]
+        if self.interval[-1][1] > tmp.interval[-1][1]:
+            end = self.interval[-1][1]
+        else:
+            end = tmp.interval[-1][1]
+        tmp_a = copy.deepcopy(self)
+        tmp_a.complement(sta, end)
+        return Interval.__mul__(tmp, tmp_a)
+
     def __getitem__(self, index):
         '''
         Usage: a[n] or a[n:m]
@@ -134,6 +175,17 @@ class Interval:
         print objects.
         '''
         return repr(self.interval)
+
+    def __contains__(self, interval):
+        '''
+        Usage: [x, x] in a or [[x, x], [x, x]] not in a
+        judge whether interval is in a or not, 'a' should be instance.
+        '''
+        tmp = self.__mul__(interval).interval
+        if tmp:
+            return True
+        else:
+            return False
 
     def complement(self, sta='#', end='#'):
         '''
@@ -166,3 +218,13 @@ class Interval:
         extract intervals not in 'b'.
         '''
         self.interval = self.__sub__(interval, 0).interval
+
+    def convert(interval):
+        assert type(interval) is list, 'Error: the type you use is {}'.format(
+            type(interval))
+        if not interval:
+            return interval
+        if type(interval[0]) is list:
+            return interval
+        else:
+            return [interval]
