@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $AUTHOR = "Xiaoou Zhang";
+our $AUTHOR = "Xiao-Ou Zhang";
 our $VERSION = "0.2.0";
 
 require Exporter;

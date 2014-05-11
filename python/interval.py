@@ -1,7 +1,10 @@
+#!/usr/bin/env python3
+
 '''
-interval.py - Cope with intervals.
-author: Xiaoou Zhang
-version: 0.6.0
+interval.py - Deal with intervals.
+author: Xiao-Ou Zhang
+version: 0.7.0
+requirements: Python 3.X
 '''
 
 import copy
@@ -11,14 +14,20 @@ class Interval:
     '''
     Class: Interval
 
-    Maintainer: Xiaoou Zhang
+    Maintainer: Xiao-Ou Zhang
 
-    Version: 0.6.0
+    Version: 0.7.0
+
+    Requirements: Python 3.X (for Python 2.0, some bugs may occur)
 
     Usage: a = Interval(list)
-           (list: [[x,x,f1...],[x,x,f2...]...] / [[x,x],[x,x]...])
+           (nested list: [[x,x,f1...],[x,x,f2...]...] / [[x,x],[x,x]...] or
+            simple list: [x,x,f1...] / [x,x])
     Notes: all the intervals in the list will become mutually exclusive and
            be sorted after instantiation.
+
+    For example: input:  [[1, 10, 'a'], [17, 22, 'b'], [7, 12, 'c'], [20, 25, 'd'], [30, 35, 'e']]
+                 output: [[1, 12, 'a', 'c'], [17, 25, 'b', 'd'], [30, 35, 'e']]
 
     Attributes: interval
 
@@ -30,7 +39,7 @@ class Interval:
                c = b - a
                a[n] or a[n:m]
                [x, x] in a or [[x, x], [x, x]] not in a
-               a.complement([sta, end])
+               a.complement(sta, end)
                a.extractwith(b)
                a.extractwithout(b)
     '''
@@ -189,7 +198,7 @@ class Interval:
 
     def complement(self, sta='#', end='#'):
         '''
-        Usage: a.complement([sta, end])
+        Usage: a.complement(sta, end)
         complement of 'a'.
         '''
         tmp = []
@@ -219,12 +228,227 @@ class Interval:
         '''
         self.interval = self.__sub__(interval, 0).interval
 
-    def convert(interval):
-        assert type(interval) is list, 'Error: the type you use is {}'.format(
-            type(interval))
+    @classmethod
+    def convert(cls, interval):
+        assert type(interval) is list, 'Error: the type you use is {}'.format(type(interval))
         if not interval:
             return interval
         if type(interval[0]) is list:
             return interval
         else:
             return [interval]
+
+if __name__ == '__main__':
+    # testing codes:
+    print('testing codes:')
+    print('\n')
+    a = [[1, 10, 'a'], [17, 22, 'b'], [7, 12, 'c'], [20, 25, 'd'], [30, 35, 'e']]
+    b = [[5, 12, 'I'], [20, 22, 'II'], [23, 28, 'III']]
+    e = [10, 15, 't']
+    print('initial data:')
+    print('a: ', a)
+    print('b: ', b)
+    print('e: ', e)
+    a = Interval(a)
+    a_copy = copy.deepcopy(a)
+    print('after instantiation:')
+    print('a: ', a)
+    print('\n')
+    print('deal with one instance and one nested list:')
+    # c = a + b or a += b
+    c = a + b
+    print('c = a + b')
+    print('a: ', a)
+    print('b: ', b)
+    print('c: ', c)
+    a += b
+    print('a += b')
+    print('a: ', a)
+    print('b: ', b)
+    a = copy.deepcopy(a_copy)
+    # c = b + a
+    c = b + a
+    print('c = b + a')
+    print('a: ', a)
+    print('b: ', b)
+    print('c: ', c)
+    # c = a * b or a *= b
+    c = a * b
+    print('c = a * b')
+    print('a: ', a)
+    print('b: ', b)
+    print('c: ', c)
+    a *= b
+    print('a *= b')
+    print('a: ', a)
+    print('b: ', b)
+    a = copy.deepcopy(a_copy)
+    # c = b * a
+    c = b * a
+    print('c = b * a')
+    print('a: ', a)
+    print('b: ', b)
+    print('c: ', c)
+    # c = a - b or a -= b
+    c = a - b
+    print('c = a - b')
+    print('a: ', a)
+    print('b: ', b)
+    print('c: ', c)
+    a -= b
+    print('a -= b')
+    print('a: ', a)
+    print('b: ', b)
+    a = copy.deepcopy(a_copy)
+    # c = b - a
+    c = b - a
+    print('c = b - a')
+    print('a: ', a)
+    print('b: ', b)
+    print('c: ', c)
+    print('\n')
+    print('deal with one instance and one simple list:')
+    # c = a + e or a += e
+    c = a + e
+    print('c = a + e')
+    print('a: ', a)
+    print('e: ', e)
+    print('c: ', c)
+    a += e
+    print('a += e')
+    print('a: ', a)
+    print('e: ', e)
+    a = copy.deepcopy(a_copy)
+    # c = e + a
+    c = e + a
+    print('c = e + a')
+    print('a: ', a)
+    print('e: ', e)
+    print('c: ', c)
+    # c = a * e or a *= e
+    c = a * e
+    print('c = a * e')
+    print('a: ', a)
+    print('e: ', e)
+    print('c: ', c)
+    a *= e
+    print('a *= e')
+    print('a: ', a)
+    print('e: ', e)
+    a = copy.deepcopy(a_copy)
+    # c = e * a
+    c = e * a
+    print('c = e * a')
+    print('a: ', a)
+    print('e: ', e)
+    print('c: ', c)
+    # c = a - e or a -= e
+    c = a - e
+    print('c = a - e')
+    print('a: ', a)
+    print('e: ', e)
+    print('c: ', c)
+    a -= e
+    print('a -= e')
+    print('a: ', a)
+    print('e: ', e)
+    a = copy.deepcopy(a_copy)
+    # c = e - a
+    c = e - a
+    print('c = e - a')
+    print('a: ', a)
+    print('e: ', e)
+    print('c: ', c)
+    print('\n')
+    print('deal with two instances:')
+    b = Interval(b)
+    # c = a + b or a += b
+    c = a + b
+    print('c = a + b')
+    print('a: ', a)
+    print('b: ', b)
+    print('c: ', c)
+    a += b
+    print('a += b')
+    print('a: ', a)
+    print('b: ', b)
+    a = copy.deepcopy(a_copy)
+    # c = b + a
+    c = b + a
+    print('c = b + a')
+    print('a: ', a)
+    print('b: ', b)
+    print('c: ', c)
+    # c = a * b or a *= b
+    c = a * b
+    print('c = a * b')
+    print('a: ', a)
+    print('b: ', b)
+    print('c: ', c)
+    a *= b
+    print('a *= b')
+    print('a: ', a)
+    print('b: ', b)
+    a = copy.deepcopy(a_copy)
+    # c = b * a
+    c = b * a
+    print('c = b * a')
+    print('a: ', a)
+    print('b: ', b)
+    print('c: ', c)
+    # c = a - b or a -= b
+    c = a - b
+    print('c = a - b')
+    print('a: ', a)
+    print('b: ', b)
+    print('c: ', c)
+    a -= b
+    print('a -= b')
+    print('a: ', a)
+    print('b: ', b)
+    a = copy.deepcopy(a_copy)
+    # c = b - a
+    c = b - a
+    print('c = b - a')
+    print('a: ', a)
+    print('b: ', b)
+    print('c: ', c)
+    print('\n')
+    # a[n] or a[n:m]
+    print('a[1]: ', a[1])
+    print('a[:2]: ', a[:2])
+    # [x, x] in a or [[x, x], [x, x]] not in a
+    print('[27, 34] in a: ', [27, 34] in a)
+    print('[31, 34] in a: ', [31, 34] in a)
+    print('[31, 37] in a: ', [31, 37] in a)
+    print('[27, 37] in a: ', [27, 37] in a)
+    print('[[27, 32], [33, 34]] in a: ', [[27, 32], [33, 34]] in a)
+    print('[[31, 32], [33, 34]] in a: ', [[31, 32], [33, 34]] in a)
+    print('[[31, 32], [33, 37]] in a: ', [[31, 32], [33, 37]] in a)
+    print('[[27, 32], [33, 37]] in a: ', [[27, 32], [33, 37]] in a)
+    # a.complement(sta, end)
+    a.complement(0, 40)
+    print('a.complement(0, 40): ',  a)
+    a = copy.deepcopy(a_copy)
+    # a.extractwith(b)
+    a.extractwith(b)
+    print('a.extractwith(b):')
+    print('a: ', a)
+    print('b: ', b)
+    a = copy.deepcopy(a_copy)
+    # a.extractwithout(b)
+    a.extractwithout(b)
+    print('a.extractwithout(b):')
+    print('a: ', a)
+    print('b: ', b)
+    # a.extractwith(e)
+    a.extractwith(e)
+    print('a.extractwith(e):')
+    print('a: ', a)
+    print('e: ', e)
+    a = copy.deepcopy(a_copy)
+    # a.extractwithout(e)
+    a.extractwithout(e)
+    print('a.extractwithout(e):')
+    print('a: ', a)
+    print('e: ', e)

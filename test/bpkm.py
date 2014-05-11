@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''
 bpkm.py - Calculate BPKM.
-author: Xiaoou Zhang
+author: Xiao-Ou Zhang
 version: 0.2.0
 '''
 

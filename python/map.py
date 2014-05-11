@@ -1,6 +1,6 @@
 '''
 map.py - Deal with mapping.
-author: Xiaoou Zhang
+author: Xiao-Ou Zhang
 version: 0.3.0
 '''
 
