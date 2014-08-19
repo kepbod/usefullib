@@ -28,7 +28,7 @@ git clone http://github.com/kepbod/usefullib.git /path/to/usefullib
 ## File Structure
 
 * [perl](https://github.com/kepbod/usefullib/tree/master/perl) - perl modules
-* [python](https://github.com/kepbod/usefullib/tree/master/python) - python modules
+* [python](https://github.com/kepbod/usefullib/tree/master/python) - python modules. All the modules have been moved to [interval](https://github.com/kepbod/interval)
 * [test](https://github.com/kepbod/usefullib/tree/master/test) - some script examples using these modules
 
 ## Modules
